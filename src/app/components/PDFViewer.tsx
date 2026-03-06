@@ -3,6 +3,8 @@ import { Document, Page, pdfjs } from "react-pdf";
 import { ChevronLeft, ChevronRight, ZoomIn, ZoomOut, FileText } from "lucide-react";
 import { motion } from "motion/react";
 import { GlassCard } from "./GlassCard";
+import "react-pdf/dist/Page/AnnotationLayer.css";
+import "react-pdf/dist/Page/TextLayer.css";
 
 // Set up PDF.js worker
 pdfjs.GlobalWorkerOptions.workerSrc = `//cdnjs.cloudflare.com/ajax/libs/pdf.js/${pdfjs.version}/pdf.worker.min.js`;
@@ -80,66 +82,66 @@ export function PDFViewer({ file, onTextExtracted }: PDFViewerProps) {
   }
 
   return (
-    <div className="flex flex-col gap-4">
+    <div className="flex flex-col gap-6">
       {/* PDF Controls */}
-      <GlassCard className="p-4">
+      <GlassCard className="p-6">
         <div className="flex items-center justify-between">
-          <div className="flex items-center gap-2">
+          <div className="flex items-center gap-3">
             <motion.button
               onClick={goToPrevPage}
               disabled={pageNumber <= 1}
-              className="p-2 rounded-[12px] hover:bg-white/40 disabled:opacity-40 disabled:cursor-not-allowed transition-all duration-200 focus:outline-none focus:ring-2 focus:ring-[#E6FF00]"
-              whileHover={{ scale: pageNumber > 1 ? 1.05 : 1 }}
+              className="p-3 rounded-[16px] hover:bg-white/60 disabled:opacity-40 disabled:cursor-not-allowed transition-all duration-500 ease-out focus:outline-none focus:ring-2 focus:ring-[#E6FF00] focus:ring-offset-4"
+              whileHover={{ scale: pageNumber > 1 ? 1.05 : 1, transition: { duration: 0.3 } }}
               whileTap={{ scale: pageNumber > 1 ? 0.95 : 1 }}
             >
-              <ChevronLeft className="w-5 h-5 text-[#111111]" />
+              <ChevronLeft className="w-5 h-5 text-[#111111]" strokeWidth={2} />
             </motion.button>
             
-            <span className="text-[#111111] font-medium px-4">
+            <span className="text-[#111111] px-6 tracking-wide" style={{ fontWeight: 500, letterSpacing: '0.02em' }}>
               Page {pageNumber} of {numPages}
             </span>
             
             <motion.button
               onClick={goToNextPage}
               disabled={pageNumber >= numPages}
-              className="p-2 rounded-[12px] hover:bg-white/40 disabled:opacity-40 disabled:cursor-not-allowed transition-all duration-200 focus:outline-none focus:ring-2 focus:ring-[#E6FF00]"
-              whileHover={{ scale: pageNumber < numPages ? 1.05 : 1 }}
+              className="p-3 rounded-[16px] hover:bg-white/60 disabled:opacity-40 disabled:cursor-not-allowed transition-all duration-500 ease-out focus:outline-none focus:ring-2 focus:ring-[#E6FF00] focus:ring-offset-4"
+              whileHover={{ scale: pageNumber < numPages ? 1.05 : 1, transition: { duration: 0.3 } }}
               whileTap={{ scale: pageNumber < numPages ? 0.95 : 1 }}
             >
-              <ChevronRight className="w-5 h-5 text-[#111111]" />
+              <ChevronRight className="w-5 h-5 text-[#111111]" strokeWidth={2} />
             </motion.button>
           </div>
 
-          <div className="flex items-center gap-2">
+          <div className="flex items-center gap-3">
             <motion.button
               onClick={zoomOut}
               disabled={scale <= 0.5}
-              className="p-2 rounded-[12px] hover:bg-white/40 disabled:opacity-40 disabled:cursor-not-allowed transition-all duration-200 focus:outline-none focus:ring-2 focus:ring-[#E6FF00]"
-              whileHover={{ scale: scale > 0.5 ? 1.05 : 1 }}
+              className="p-3 rounded-[16px] hover:bg-white/60 disabled:opacity-40 disabled:cursor-not-allowed transition-all duration-500 ease-out focus:outline-none focus:ring-2 focus:ring-[#E6FF00] focus:ring-offset-4"
+              whileHover={{ scale: scale > 0.5 ? 1.05 : 1, transition: { duration: 0.3 } }}
               whileTap={{ scale: scale > 0.5 ? 0.95 : 1 }}
             >
-              <ZoomOut className="w-5 h-5 text-[#111111]" />
+              <ZoomOut className="w-5 h-5 text-[#111111]" strokeWidth={2} />
             </motion.button>
             
-            <span className="text-[#111111] font-medium px-4">
+            <span className="text-[#111111] px-6 tracking-wide" style={{ fontWeight: 500, letterSpacing: '0.02em' }}>
               {Math.round(scale * 100)}%
             </span>
             
             <motion.button
               onClick={zoomIn}
               disabled={scale >= 2.0}
-              className="p-2 rounded-[12px] hover:bg-white/40 disabled:opacity-40 disabled:cursor-not-allowed transition-all duration-200 focus:outline-none focus:ring-2 focus:ring-[#E6FF00]"
-              whileHover={{ scale: scale < 2.0 ? 1.05 : 1 }}
+              className="p-3 rounded-[16px] hover:bg-white/60 disabled:opacity-40 disabled:cursor-not-allowed transition-all duration-500 ease-out focus:outline-none focus:ring-2 focus:ring-[#E6FF00] focus:ring-offset-4"
+              whileHover={{ scale: scale < 2.0 ? 1.05 : 1, transition: { duration: 0.3 } }}
               whileTap={{ scale: scale < 2.0 ? 0.95 : 1 }}
             >
-              <ZoomIn className="w-5 h-5 text-[#111111]" />
+              <ZoomIn className="w-5 h-5 text-[#111111]" strokeWidth={2} />
             </motion.button>
           </div>
         </div>
       </GlassCard>
 
       {/* PDF Document */}
-      <GlassCard className="p-8 overflow-auto max-h-[calc(100vh-300px)]">
+      <GlassCard className="p-10 overflow-auto max-h-[calc(100vh-300px)]">
         <div className="flex justify-center">
           <Document
             file={file}
@@ -159,17 +161,35 @@ export function PDFViewer({ file, onTextExtracted }: PDFViewerProps) {
 
       {/* Extracted Text Preview (Hidden but available for AI processing) */}
       {extractedText && (
-        <GlassCard className="p-4">
-          <div className="flex items-center gap-2 mb-2">
-            <FileText className="w-4 h-4 text-[#E6FF00]" />
-            <span className="text-sm font-medium text-[#111111]">
-              Text Extracted ({extractedText.split(" ").length} words)
-            </span>
-          </div>
-          <p className="text-xs text-[#6B6B6B]">
-            Content ready for AI analysis
-          </p>
-        </GlassCard>
+        <motion.div
+          initial={{ opacity: 0, y: 20 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ delay: 0.3, duration: 0.7, ease: [0.16, 1, 0.3, 1] }}
+        >
+          <GlassCard className="p-6">
+            <div className="flex items-center gap-3 mb-2">
+              <motion.div
+                animate={{ 
+                  scale: [1, 1.1, 1],
+                  opacity: [0.7, 1, 0.7]
+                }}
+                transition={{ 
+                  duration: 2.5,
+                  repeat: Infinity,
+                  ease: "easeInOut"
+                }}
+              >
+                <FileText className="w-5 h-5 text-[#E6FF00]" strokeWidth={2} />
+              </motion.div>
+              <span className="text-sm text-[#111111] tracking-wide" style={{ fontWeight: 500, letterSpacing: '0.02em' }}>
+                Text Extracted ({extractedText.split(" ").length} words)
+              </span>
+            </div>
+            <p className="text-xs text-[#6B6B6B] tracking-wide" style={{ letterSpacing: '0.05em' }}>
+              CONTENT READY FOR AI ANALYSIS
+            </p>
+          </GlassCard>
+        </motion.div>
       )}
     </div>
   );

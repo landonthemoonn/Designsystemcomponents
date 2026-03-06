@@ -1,4 +1,5 @@
 import { MessageSquare, Clock, BarChart3, Settings, Upload, FileText } from "lucide-react";
+import { motion } from "motion/react";
 import { cn } from "../lib/utils";
 
 interface SidebarProps {
@@ -17,34 +18,53 @@ const navItems = [
 
 export function Sidebar({ currentView, onViewChange }: SidebarProps) {
   return (
-    <div className="w-64 h-screen bg-white/40 backdrop-blur-[20px] border-r border-black/5 p-6 flex flex-col">
+    <div className="w-72 h-screen bg-white/40 backdrop-blur-[24px] border-r border-black/5 p-8 flex flex-col">
       {/* Logo */}
-      <div className="mb-12">
-        <h1 className="font-bold text-[#111111] text-xl">Receipts</h1>
-        <p className="text-xs text-[#6B6B6B] mt-1">AI Message Analysis</p>
-      </div>
+      <motion.div 
+        className="mb-16"
+        initial={{ opacity: 0, x: -20 }}
+        animate={{ opacity: 1, x: 0 }}
+        transition={{ duration: 0.8, ease: [0.16, 1, 0.3, 1] }}
+      >
+        <h1 className="text-2xl tracking-tight text-[#111111] mb-2" style={{ fontWeight: 500, letterSpacing: '-0.02em' }}>Receipts</h1>
+        <p className="text-sm text-[#6B6B6B] tracking-wide" style={{ letterSpacing: '0.05em' }}>AI MESSAGE ANALYSIS</p>
+      </motion.div>
 
       {/* Navigation */}
-      <nav className="flex-1 space-y-2">
-        {navItems.map((item) => {
+      <nav className="flex-1 space-y-3">
+        {navItems.map((item, index) => {
           const Icon = item.icon;
           const isActive = currentView === item.id;
           
           return (
-            <button
+            <motion.button
               key={item.id}
               onClick={() => onViewChange(item.id)}
+              initial={{ opacity: 0, x: -20 }}
+              animate={{ opacity: 1, x: 0 }}
+              transition={{ 
+                duration: 0.8, 
+                delay: index * 0.08,
+                ease: [0.16, 1, 0.3, 1]
+              }}
+              whileHover={{ 
+                x: 4,
+                transition: { duration: 0.4, ease: [0.16, 1, 0.3, 1] }
+              }}
+              whileTap={{ scale: 0.98 }}
               className={cn(
-                "w-full flex items-center gap-3 px-4 py-3 rounded-[16px] transition-all duration-200",
-                "focus:outline-none focus:ring-2 focus:ring-[#E6FF00] focus:ring-offset-2",
+                "w-full flex items-center gap-4 px-5 py-4 rounded-[20px] transition-all duration-500 ease-out",
+                "focus:outline-none focus:ring-2 focus:ring-[#E6FF00] focus:ring-offset-4",
                 isActive
-                  ? "bg-[#E6FF00] text-[#111111] shadow-lg"
-                  : "text-[#6B6B6B] hover:bg-white/60 hover:text-[#111111]"
+                  ? "bg-[#E6FF00] text-[#111111] shadow-2xl shadow-[#E6FF00]/20"
+                  : "text-[#6B6B6B] hover:bg-white/70 hover:text-[#111111] hover:shadow-lg hover:shadow-black/5"
               )}
             >
-              <Icon className="w-5 h-5" />
-              <span className="font-medium">{item.label}</span>
-            </button>
+              <Icon className="w-5 h-5" strokeWidth={isActive ? 2.5 : 2} />
+              <span className="tracking-wide" style={{ fontWeight: isActive ? 500 : 400, letterSpacing: '0.01em' }}>
+                {item.label}
+              </span>
+            </motion.button>
           );
         })}
       </nav>

@@ -1,4 +1,5 @@
 import { useState } from "react";
+import { motion, AnimatePresence } from "motion/react";
 import { Sidebar } from "./components/Sidebar";
 import { UploadScreen } from "./screens/UploadScreen";
 import { FilesScreen } from "./screens/FilesScreen";
@@ -44,7 +45,23 @@ export default function App() {
   return (
     <div className="flex h-screen bg-[#F5F5F6] overflow-hidden">
       <Sidebar currentView={currentView} onViewChange={setCurrentView} />
-      <main className="flex-1 overflow-hidden">{renderScreen()}</main>
+      <main className="flex-1 overflow-hidden">
+        <AnimatePresence mode="wait">
+          <motion.div
+            key={currentView}
+            initial={{ opacity: 0, y: 20 }}
+            animate={{ opacity: 1, y: 0 }}
+            exit={{ opacity: 0, y: -20 }}
+            transition={{ 
+              duration: 0.6,
+              ease: [0.16, 1, 0.3, 1]
+            }}
+            className="h-full"
+          >
+            {renderScreen()}
+          </motion.div>
+        </AnimatePresence>
+      </main>
     </div>
   );
 }

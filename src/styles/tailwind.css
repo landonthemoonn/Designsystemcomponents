@@ -2,3 +2,32 @@
 @source '../**/*.{js,ts,jsx,tsx}';
 
 @import 'tw-animate-css';
+
+/* High Fashion Editorial Enhancements */
+@layer base {
+  * {
+    cursor: url('data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24"><circle cx="12" cy="12" r="8" fill="rgba(230, 255, 0, 0.15)" stroke="rgba(230, 255, 0, 0.4)" stroke-width="1"/><circle cx="12" cy="12" r="2" fill="rgba(17, 17, 17, 0.8)"/></svg>') 12 12, auto;
+  }
+
+  button, a, [role="button"] {
+    cursor: url('data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24"><circle cx="12" cy="12" r="10" fill="rgba(230, 255, 0, 0.25)" stroke="rgba(230, 255, 0, 0.6)" stroke-width="1.5"/><circle cx="12" cy="12" r="3" fill="rgba(17, 17, 17, 1)"/></svg>') 12 12, pointer;
+  }
+
+  input, textarea {
+    cursor: url('data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24"><rect x="10" y="4" width="2" height="16" fill="rgba(230, 255, 0, 0.8)"/></svg>') 12 12, text;
+  }
+}
+
+/* Smooth scrolling with momentum */
+@layer utilities {
+  .smooth-scroll {
+    scroll-behavior: smooth;
+    -webkit-overflow-scrolling: touch;
+  }
+}
+
+/* Selection styling */
+::selection {
+  background-color: rgba(230, 255, 0, 0.3);
+  color: #111111;
+}
