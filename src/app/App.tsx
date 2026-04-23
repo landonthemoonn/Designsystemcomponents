@@ -12,12 +12,18 @@ export default function App() {
   const [currentView, setCurrentView] = useState<string>("upload");
   const [hasUploaded, setHasUploaded] = useState(false);
   const [uploadedFile, setUploadedFile] = useState<File | null>(null);
+  const [extractedText, setExtractedText] = useState<string>("");
 
   const handleUploadComplete = (file: File) => {
     setHasUploaded(true);
     setUploadedFile(file);
+    setExtractedText("");
     setCurrentView("chat");
   };
+
+  const extractedWordCount = extractedText
+    ? extractedText.split(/\s+/).filter(Boolean).length
+    : undefined;
 
   const renderScreen = () => {
     if (!hasUploaded && currentView !== "upload") {
@@ -28,9 +34,15 @@ export default function App() {
       case "upload":
         return <UploadScreen onUploadComplete={handleUploadComplete} />;
       case "files":
-        return <FilesScreen uploadedFile={uploadedFile} onNewUpload={() => setCurrentView("upload")} />;
+        return (
+          <FilesScreen
+            uploadedFile={uploadedFile}
+            onNewUpload={() => setCurrentView("upload")}
+            onTextExtracted={setExtractedText}
+          />
+        );
       case "chat":
-        return <ChatScreen uploadedFile={uploadedFile} />;
+        return <ChatScreen uploadedFile={uploadedFile} extractedWordCount={extractedWordCount} />;
       case "timeline":
         return <TimelineScreen />;
       case "insights":

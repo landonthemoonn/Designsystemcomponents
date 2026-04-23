@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { FileText, Upload as UploadIcon } from "lucide-react";
 import { motion, AnimatePresence } from "motion/react";
 import { PDFViewer } from "../components/PDFViewer";
@@ -8,16 +8,30 @@ import { GlassCard } from "../components/GlassCard";
 interface FilesScreenProps {
   uploadedFile: File | null;
   onNewUpload?: () => void;
+  onTextExtracted?: (text: string) => void;
 }
 
-export function FilesScreen({ uploadedFile, onNewUpload }: FilesScreenProps) {
+export function FilesScreen({ uploadedFile, onNewUpload, onTextExtracted }: FilesScreenProps) {
   const [viewingFile, setViewingFile] = useState<File | null>(null);
-  const [extractedText, setExtractedText] = useState<string>("");
+  const [textContent, setTextContent] = useState<string>("");
 
   const isPDF = uploadedFile?.type === "application/pdf" || uploadedFile?.name.endsWith(".pdf");
+  const isViewingPDF = viewingFile?.type === "application/pdf" || viewingFile?.name.endsWith(".pdf");
+
+  // Read text file content when a non-PDF is selected for viewing
+  useEffect(() => {
+    if (!viewingFile || isViewingPDF) return;
+    const reader = new FileReader();
+    reader.onload = (e) => {
+      const content = e.target?.result as string;
+      setTextContent(content || "");
+      if (onTextExtracted) onTextExtracted(content || "");
+    };
+    reader.readAsText(viewingFile);
+  }, [viewingFile, isViewingPDF, onTextExtracted]);
 
   const handleTextExtracted = (text: string) => {
-    setExtractedText(text);
+    if (onTextExtracted) onTextExtracted(text);
   };
 
   return (
@@ -65,7 +79,7 @@ export function FilesScreen({ uploadedFile, onNewUpload }: FilesScreenProps) {
           {/* File Viewer */}
           <div className="lg:col-span-2">
             <AnimatePresence mode="wait">
-              {viewingFile && isPDF ? (
+              {viewingFile && isViewingPDF ? (
                 <motion.div
                   key="pdf-viewer"
                   initial={{ opacity: 0, y: 20 }}
@@ -85,13 +99,19 @@ export function FilesScreen({ uploadedFile, onNewUpload }: FilesScreenProps) {
                   exit={{ opacity: 0, y: -20 }}
                 >
                   <GlassCard className="p-6">
-                    <h3 className="font-semibold text-[#111111] mb-4">
-                      {viewingFile.name}
-                    </h3>
+                    <div className="flex items-center justify-between mb-4">
+                      <h3 className="font-semibold text-[#111111]">
+                        {viewingFile.name}
+                      </h3>
+                      {textContent && (
+                        <span className="text-xs text-[#6B6B6B]">
+                          {textContent.split(/\s+/).filter(Boolean).length.toLocaleString()} words
+                        </span>
+                      )}
+                    </div>
                     <div className="bg-white/40 backdrop-blur-[10px] rounded-[12px] p-4 max-h-[600px] overflow-y-auto">
                       <pre className="text-sm text-[#111111] whitespace-pre-wrap font-mono">
-                        {/* File content would be loaded here */}
-                        Content preview available after processing...
+                        {textContent || "Loading..."}
                       </pre>
                     </div>
                   </GlassCard>

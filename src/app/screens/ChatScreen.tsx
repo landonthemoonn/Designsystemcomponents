@@ -32,20 +32,22 @@ const mockMessages = [
 
 interface ChatScreenProps {
   uploadedFile?: File | null;
+  extractedWordCount?: number;
 }
 
-export function ChatScreen({ uploadedFile }: ChatScreenProps) {
+export function ChatScreen({ uploadedFile, extractedWordCount }: ChatScreenProps) {
   const [input, setInput] = useState("");
   const [messages, setMessages] = useState<typeof mockMessages>([]);
   const [searchQuery, setSearchQuery] = useState("");
+  const [isLoading, setIsLoading] = useState(false);
 
   const handleSend = () => {
-    if (!input.trim()) return;
-    
-    // Simulate AI response
+    if (!input.trim() || isLoading) return;
+    setInput("");
+    setIsLoading(true);
     setTimeout(() => {
-      setMessages([...messages, mockMessages[0]]);
-      setInput("");
+      setMessages((prev) => [...prev, mockMessages[0]]);
+      setIsLoading(false);
     }, 800);
   };
 
@@ -72,9 +74,9 @@ export function ChatScreen({ uploadedFile }: ChatScreenProps) {
       {/* Main chat area */}
       <div className="flex-1 overflow-y-auto p-6">
         <div className="max-w-4xl mx-auto">
-          <FileInfoBanner file={uploadedFile || null} />
-          
-          {messages.length === 0 ? (
+          <FileInfoBanner file={uploadedFile || null} extractedWordCount={extractedWordCount} />
+
+          {messages.length === 0 && !isLoading ? (
             <div className="flex items-center justify-center min-h-[60vh]">
               <div className="text-center max-w-2xl">
                 <h2 className="font-semibold text-[#111111] mb-6">
@@ -106,6 +108,26 @@ export function ChatScreen({ uploadedFile }: ChatScreenProps) {
               {messages.map((message, index) => (
                 <AIMessageBubble key={index} {...message} />
               ))}
+              {isLoading && (
+                <motion.div
+                  initial={{ opacity: 0, y: 20 }}
+                  animate={{ opacity: 1, y: 0 }}
+                  className="max-w-4xl"
+                >
+                  <div className="bg-white/60 backdrop-blur-[20px] border border-white/40 rounded-[24px] p-8">
+                    <div className="flex items-center gap-3">
+                      <div className="w-10 h-10 rounded-full bg-[#E6FF00] flex items-center justify-center">
+                        <motion.div
+                          animate={{ rotate: 360 }}
+                          transition={{ duration: 1.5, repeat: Infinity, ease: "linear" }}
+                          className="w-5 h-5 border-2 border-[#111111]/30 border-t-[#111111] rounded-full"
+                        />
+                      </div>
+                      <span className="text-[#6B6B6B]">Analyzing your messages...</span>
+                    </div>
+                  </div>
+                </motion.div>
+              )}
             </div>
           )}
         </div>
@@ -131,7 +153,7 @@ export function ChatScreen({ uploadedFile }: ChatScreenProps) {
               />
               <button
                 onClick={handleSend}
-                disabled={!input.trim()}
+                disabled={!input.trim() || isLoading}
                 className="w-10 h-10 flex items-center justify-center bg-[#E6FF00] rounded-[12px] text-[#111111] hover:shadow-lg hover:shadow-[#E6FF00]/20 transition-all duration-200 disabled:opacity-50 disabled:cursor-not-allowed focus:outline-none focus:ring-2 focus:ring-[#E6FF00] focus:ring-offset-2"
               >
                 <Send className="w-5 h-5" />
